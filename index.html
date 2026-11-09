@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <meta
+      name="description"
+      content="A quieter kind of typing practice. Find your rhythm, one line at a time."
+    />
+    <title>Key & Quill — Find your typing rhythm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f5f4ef;
+        --card: #fffefa;
+        --ink: #202a26;
+        --muted: #858b82;
+        --line: #e8e7df;
+        --green: #376b52;
+        --green-dark: #28523d;
+        --green-pale: #eaf0e9;
+        --orange: #e68c5c;
+        --wrong: #c66d5d;
+        --serif: "Playfair Display", Georgia, serif;
+        --sans: "DM Sans", sans-serif;
+        --mono: "DM Mono", monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(ellipse at 82% 4%, rgba(221, 229, 215, 0.4), transparent 30rem),
+          var(--paper);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      button:focus-visible,
+      .typing-input:focus-visible + .passage-text {
+        outline: 2px solid var(--orange);
+        outline-offset: 4px;
+      }
+
+      .page-shell {
+        width: min(1120px, calc(100% - 64px));
+        margin: 0 auto;
+      }
+
+      .site-header {
+        display: flex;
+        height: 82px;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(32, 42, 38, 0.08);
+        animation: arrive 650ms both;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--green);
+        color: white;
+      }
+
+      .brand-mark svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .header-note {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #777e75;
+        font-size: 12px;
+        letter-spacing: 0.01em;
+      }
+
+      .online-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #83a887;
+        box-shadow: 0 0 0 3px rgba(131, 168, 135, 0.13);
+      }
+
+      .intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 48px 0 34px;
+        animation: arrive 700ms 80ms both;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 12px;
+        color: var(--green);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 17px;
+        height: 1px;
+        background: var(--orange);
+        content: "";
+      }
+
+      h1 {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 52px);
+        font-weight: 500;
+        letter-spacing: -1.7px;
+        line-height: 1.13;
+      }
+
+      h1 em {
+        color: var(--green);
+        font-weight: 500;
+      }
+
+      .intro-copy {
+        margin: 12px 0 0;
+        color: #7c8279;
+        font-size: 14px;
+      }
+
+      .daily-note {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 4px;
+        color: #777e75;
+        font-size: 12px;
+      }
+
+      .daily-icon {
+        display: grid;
+        width: 35px;
+        height: 35px;
+        place-items: center;
+        border: 1px solid #e6e5dc;
+        border-radius: 50%;
+        background: rgba(255, 254, 250, 0.66);
+        color: var(--green);
+      }
+
+      .daily-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .practice-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 265px;
+        align-items: start;
+        gap: 20px;
+        padding-bottom: 64px;
+      }
+
+      .practice-card,
+      .sidebar-card {
+        border: 1px solid rgba(48, 57, 48, 0.08);
+        border-radius: 17px;
+        background: var(--card);
+        box-shadow: 0 12px 40px rgba(49, 53, 42, 0.045);
+      }
+
+      .practice-card {
+        overflow: hidden;
+        animation: arrive 700ms 150ms both;
+      }
+
+      .card-topline {
+        display: flex;
+        min-height: 62px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 26px;
+        border-bottom: 1px solid #f0efe9;
+      }
+
+      .level-caption {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .level-tag {
+        padding: 5px 9px;
+        border-radius: 6px;
+        background: var(--green-pale);
+        color: var(--green-dark);
+        font-family: var(--mono);
+        font-size: 10px;
+      }
+
+      .source-label {
+        color: #9a9c92;
+        font-size: 11px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 23px 26px 20px;
+      }
+
+      .metric {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        border-right: 1px solid #eeede6;
+      }
+
+      .metric:not(:first-child) {
+        padding-left: 25px;
+      }
+
+      .metric:last-child {
+        border-right: 0;
+      }
+
+      .metric-label {
+        color: #999c91;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .metric-value {
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 24px;
+        letter-spacing: -1.3px;
+        line-height: 1;
+        transition: color 200ms ease;
+      }
+
+      .metric-value small {
+        color: #a3a59b;
+        font-size: 12px;
+        letter-spacing: 0;
+      }
+
+      .timer-value {
+        color: var(--green);
+      }
+
+      .timer-value.urgent {
+        color: var(--wrong);
+        animation: pulse 800ms ease-in-out infinite;
+      }
+
+      .passage-wrap {
+        position: relative;
+        min-height: 226px;
+        margin: 0 26px;
+        padding: 22px 4px 16px;
+        border-top: 1px solid #f0efe9;
+        border-bottom: 1px solid #f0efe9;
+        cursor: text;
+      }
+
+      .passage-text {
+        position: relative;
+        margin: 0;
+        color: #b7b9af;
+        font-family: var(--serif);
+        font-size: 21px;
+        letter-spacing: 0.05px;
+        line-height: 1.9;
+        transition: color 150ms ease;
+        overflow-wrap: anywhere;
+      }
+
+      .passage-text .correct {
+        color: #35433a;
+      }
+
+      .passage-text .incorrect {
+        border-radius: 2px;
+        background: rgba(198, 109, 93, 0.14);
+        color: var(--wrong);
+      }
+
+      .passage-text .current {
+        position: relative;
+      }
+
+      .passage-text .current::before {
+        position: absolute;
+        top: 3px;
+        bottom: 1px;
+        left: -1px;
+        width: 2px;
+        border-radius: 2px;
+        background: var(--orange);
+        content: "";
+        animation: caret 1s steps(2, start) infinite;
+      }
+
+      .typing-input {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border: 0;
+        opacity: 0;
+        cursor: text;
+      }
+
+      .typing-input:focus {
+        outline: none;
+      }
+
+      .typing-input:focus-visible + .passage-text {
+        outline: 2px solid transparent;
+      }
+
+      .passage-hint {
+        display: flex;
+        min-height: 43px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #a0a297;
+        font-size: 10px;
+      }
+
+      .focus-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .focus-hint svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      .passage-wrap.is-active ~ .passage-hint .focus-hint {
+        color: var(--green);
+      }
+
+      .keyboard-hint kbd {
+        padding: 3px 6px;
+        border: 1px solid #e8e7df;
+        border-radius: 4px;
+        background: #faf9f5;
+        font-family: var(--mono);
+        font-size: 9px;
+      }
+
+      .card-footer {
+        display: flex;
+        min-height: 70px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 26px;
+      }
+
+      .progress-group {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #9a9c92;
+        font-size: 10px;
+      }
+
+      .progress-track {
+        width: 105px;
+        height: 4px;
+        overflow: hidden;
+        border-radius: 9px;
+        background: #eeede7;
+      }
+
+      .progress-fill {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--green);
+        transition: width 180ms ease;
+      }
+
+      .reset-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 10px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: #747a71;
+        cursor: pointer;
+        font-size: 11px;
+        transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+      }
+
+      .reset-button:hover {
+        border-color: var(--line);
+        background: #faf9f5;
+        color: var(--green-dark);
+      }
+
+      .reset-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .result-banner {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 26px 20px;
+        padding: 13px 15px;
+        border: 1px solid #e1eade;
+        border-radius: 9px;
+        background: #f2f6f0;
+        color: var(--green-dark);
+        font-size: 12px;
+        animation: arrive 350ms ease both;
+      }
+
+      .result-banner.is-visible {
+        display: flex;
+      }
+
+      .result-banner strong {
+        font-family: var(--serif);
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .sidebar {
+        display: grid;
+        gap: 14px;
+        animation: arrive 700ms 220ms both;
+      }
+
+      .sidebar-card {
+        padding: 21px 19px;
+      }
+
+      .side-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 17px;
+      }
+
+      .side-heading h2 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: -0.1px;
+      }
+
+      .side-heading span {
+        color: #a1a398;
+        font-size: 10px;
+      }
+
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 7px;
+      }
+
+      .level-button {
+        display: grid;
+        aspect-ratio: 1;
+        min-width: 0;
+        place-items: center;
+        border: 1px solid #eeede6;
+        border-radius: 8px;
+        background: #fffefa;
+        color: #73796f;
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 11px;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease,
+          color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .level-button:hover {
+        transform: translateY(-2px);
+        border-color: #b9cbb9;
+      }
+
+      .level-button[aria-pressed="true"] {
+        transform: translateY(-1px);
+        border-color: var(--green);
+        background: var(--green);
+        box-shadow: 0 4px 10px rgba(55, 107, 82, 0.18);
+        color: white;
+      }
+
+      .difficulty-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin: 16px 0 0;
+        color: #8d9188;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+
+      .difficulty-note svg {
+        width: 14px;
+        height: 14px;
+        flex: 0 0 14px;
+        margin-top: 1px;
+        color: var(--orange);
+      }
+
+      .quote-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 139px;
+        padding: 19px;
+        border-color: transparent;
+        background: #eaf0e8;
+      }
+
+      .quote-card::after {
+        position: absolute;
+        right: 3px;
+        bottom: -30px;
+        color: rgba(55, 107, 82, 0.08);
+        content: "“";
+        font-family: var(--serif);
+        font-size: 150px;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .quote-mark {
+        margin: 0 0 7px;
+        color: var(--green);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .quote-text {
+        position: relative;
+        z-index: 1;
+        max-width: 200px;
+        margin: 0;
+        color: #415b47;
+        font-family: var(--serif);
+        font-size: 16px;
+        font-style: italic;
+        line-height: 1.5;
+      }
+
+      .quote-credit {
+        margin: 9px 0 0;
+        color: #899a88;
+        font-size: 9px;
+      }
+
+      .bottom-note {
+        padding: 0 0 24px;
+        color: #a0a297;
+        font-size: 10px;
+        text-align: center;
+      }
+
+      @keyframes arrive {
+        from {
+          transform: translateY(11px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes caret {
+        to {
+          visibility: hidden;
+        }
+      }
+
+      @keyframes pulse {
+        50% {
+          opacity: 0.55;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page-shell {
+          width: min(100% - 36px, 560px);
+        }
+
+        .site-header {
+          height: 68px;
+        }
+
+        .intro {
+          align-items: flex-start;
+          padding: 38px 0 27px;
+        }
+
+        .daily-note {
+          display: none;
+        }
+
+        .practice-layout {
+          grid-template-columns: 1fr;
+          gap: 14px;
+          padding-bottom: 38px;
+        }
+
+        .sidebar {
+          grid-template-columns: 1fr 1fr;
+          align-items: stretch;
+        }
+
+        .quote-card {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .level-button {
+          aspect-ratio: 1.2;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-shell {
+          width: calc(100% - 28px);
+        }
+
+        .header-note {
+          font-size: 10px;
+        }
+
+        .intro {
+          padding-top: 32px;
+        }
+
+        h1 {
+          font-size: 39px;
+        }
+
+        .intro-copy {
+          max-width: 275px;
+          font-size: 12px;
+          line-height: 1.6;
+        }
+
+        .card-topline {
+          min-height: 56px;
+          padding: 0 16px;
+        }
+
+        .source-label {
+          max-width: 130px;
+          text-align: right;
+        }
+
+        .metrics {
+          padding: 20px 16px 17px;
+        }
+
+        .metric:not(:first-child) {
+          padding-left: 15px;
+        }
+
+        .metric-value {
+          font-size: 21px;
+        }
+
+        .passage-wrap {
+          min-height: 240px;
+          margin: 0 16px;
+          padding-top: 17px;
+        }
+
+        .passage-text {
+          font-size: 19px;
+          line-height: 1.85;
+        }
+
+        .passage-hint {
+          font-size: 9px;
+        }
+
+        .card-footer {
+          min-height: 62px;
+          padding: 0 16px;
+        }
+
+        .progress-track {
+          width: 68px;
+        }
+
+        .result-banner {
+          margin-right: 16px;
+          margin-left: 16px;
+        }
+
+        .sidebar {
+          grid-template-columns: 1fr;
+        }
+
+        .quote-card {
+          min-height: 125px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#" aria-label="Key and Quill home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14.4 4.1c1.9-.6 3.8-.5 5.2-.1-.4 1.5-1.2 3.4-2.7 5.2-2.6 3.1-6.7 5-9.2 4.7.4-3.1 3.6-8.6 6.7-9.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+              <path d="M4.6 20c4-5.8 7.7-9.5 12.2-13.2M6.7 16.9l-2.1-.1m4.9-3.2-.1-2.1m3.3-.9 2 .6m-4.9 3.3.8 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span>key &amp; quill</span>
+        </a>
+        <div class="header-note"><span class="online-dot"></span>A little practice, just for you</div>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">Your quiet corner of the internet</p>
+            <h1 id="page-title">Find your <em>flow.</em></h1>
+            <p class="intro-copy">A little practice, a lot of progress. Take it one word at a time.</p>
+          </div>
+          <div class="daily-note">
+            <span class="daily-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3.5v2m0 13v2m8.5-8.5h-2m-13 0h-2m14.01-6.01-1.42 1.42M7.91 16.09l-1.42 1.42m11.02 0-1.42-1.42M7.91 7.91 6.49 6.49" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7" />
+              </svg>
+            </span>
+            <span>A fresh passage<br />for every level</span>
+          </div>
+        </section>
+
+        <section class="practice-layout" aria-label="Typing practice">
+          <article class="practice-card">
+            <div class="card-topline">
+              <div class="level-caption">
+                <span class="level-tag" id="level-tag">LEVEL 01</span>
+                <span id="level-title">A gentle beginning</span>
+              </div>
+              <span class="source-label" id="source-label">A moment in the garden</span>
+            </div>
+
+            <div class="metrics" aria-live="polite">
+              <div class="metric">
+                <span class="metric-label">Words per min</span>
+                <span class="metric-value" id="wpm">0 <small>wpm</small></span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Accuracy</span>
+                <span class="metric-value" id="accuracy">100<small>%</small></span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Time left</span>
+                <span class="metric-value timer-value" id="timer">60<small>s</small></span>
+              </div>
+            </div>
+
+            <div class="passage-wrap" id="passage-wrap">
+              <textarea
+                class="typing-input"
+                id="typing-input"
+                aria-label="Type the passage shown on screen"
+                aria-describedby="typing-hint"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                wrap="off"
+              ></textarea>
+              <p class="passage-text" id="passage-text" aria-hidden="true"></p>
+            </div>
+
+            <div class="passage-hint" id="typing-hint">
+              <span class="focus-hint">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 8V5a1 1 0 0 1 1-1h3m8 0h3a1 1 0 0 1 1 1v3m0 8v3a1 1 0 0 1-1 1h-3m-8 0H5a1 1 0 0 1-1-1v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                  <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Click the passage and start typing
+              </span>
+              <span class="keyboard-hint"><kbd>esc</kbd> to restart</span>
+            </div>
+
+            <div class="card-footer">
+              <div class="progress-group">
+                <span>Passage progress</span>
+                <span class="progress-track" aria-hidden="true"><span class="progress-fill" id="progress-fill"></span></span>
+                <span id="progress-label">0%</span>
+              </div>
+              <button class="reset-button" id="reset-button" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4.5 11a7.5 7.5 0 1 1 1.7 5.8M4.5 11V5.8M4.5 11h5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Start over
+              </button>
+            </div>
+            <div class="result-banner" id="result-banner" role="status">
+              <span id="result-message"></span>
+              <strong id="result-score"></strong>
+            </div>
+          </article>
+
+          <aside class="sidebar">
+            <section class="sidebar-card" aria-labelledby="levels-heading">
+              <div class="side-heading">
+                <h2 id="levels-heading">Choose your level</h2>
+                <span>01 — 10</span>
+              </div>
+              <div class="level-grid" id="level-grid" role="group" aria-label="Passage difficulty">
+                <button class="level-button" type="button" data-level="1" aria-label="Level 1" aria-pressed="true">01</button>
+                <button class="level-button" type="button" data-level="2" aria-label="Level 2" aria-pressed="false">02</button>
+                <button class="level-button" type="button" data-level="3" aria-label="Level 3" aria-pressed="false">03</button>
+                <button class="level-button" type="button" data-level="4" aria-label="Level 4" aria-pressed="false">04</button>
+                <button class="level-button" type="button" data-level="5" aria-label="Level 5" aria-pressed="false">05</button>
+                <button class="level-button" type="button" data-level="6" aria-label="Level 6" aria-pressed="false">06</button>
+                <button class="level-button" type="button" data-level="7" aria-label="Level 7" aria-pressed="false">07</button>
+                <button class="level-button" type="button" data-level="8" aria-label="Level 8" aria-pressed="false">08</button>
+                <button class="level-button" type="button" data-level="9" aria-label="Level 9" aria-pressed="false">09</button>
+                <button class="level-button" type="button" data-level="10" aria-label="Level 10" aria-pressed="false">10</button>
+              </div>
+              <p class="difficulty-note">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3.5 14.2 9l5.8.4-4.4 3.8 1.4 5.6-5-3-5 3 1.4-5.6L4 9.4 9.8 9 12 3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                </svg>
+                Each step brings a longer, more intricate passage.
+              </p>
+            </section>
+
+            <section class="sidebar-card quote-card" aria-label="A note on practice">
+              <p class="quote-mark">A note to self</p>
+              <p class="quote-text">“Slow is smooth, and smooth becomes swift.”</p>
+              <p class="quote-credit">One unhurried keystroke at a time.</p>
+            </section>
+          </aside>
+        </section>
+      </main>
+      <footer class="bottom-note">Made for curious minds and wandering fingers.</footer>
+    </div>
+
+    <script>
+      const levels = [
+        {
+          title: "A gentle beginning",
+          source: "A moment in the garden",
+          passage: "The morning sun warmed the garden wall. A small bird sang from the apple tree, and the day began in its own sweet time.",
+        },
+        {
+          title: "Finding your rhythm",
+          source: "The quiet road",
+          passage: "Beyond the village, a narrow path wandered through the fields. Soft clouds drifted overhead, while the river followed close beside.",
+        },
+        {
+          title: "A little more to tell",
+          source: "The old clockmaker",
+          passage: "Each morning, the clockmaker opened his little shop before the town had stirred. He listened to every patient tick, as though each clock held a different story.",
+        },
+        {
+          title: "Words with a little wonder",
+          source: "A letter from the coast",
+          passage: "Dear friend, the sea is silver beneath the moon, and every wave arrives carrying a secret. I walked the shore until the stars appeared, then came home with sand in my shoes and wonder in my heart.",
+        },
+        {
+          title: "A more winding sentence",
+          source: "The traveling player",
+          passage: "When evening gathered round the market square, a traveling player unfurled his painted cloth and beckoned the townsfolk near. His tales leapt from castle to forest, and for a little while, no one remembered the hour.",
+        },
+        {
+          title: "A touch of the theatrical",
+          source: "The masquerade",
+          passage: "Beneath a hundred candle-flames, the masked assembly turned in stately circles. A violin wept, a silver laugh rang clear, and one uninvited guest watched from the shadow of a velvet curtain, while a forgotten name lingered upon each tongue.",
+        },
+        {
+          title: "For the thoughtful typist",
+          source: "The midnight garden",
+          passage: "What strange enchantment keeps the sleeping garden waking? A pale rose trembles in the breeze; the cypress casts its crooked shadow; and somewhere, unseen, the nightingale rehearses a song it dares not sing by day; no answer comes, save the wind among the leaves.",
+        },
+        {
+          title: "Where the story deepens",
+          source: "The storm at Blackthorn",
+          passage: "The storm did beat against Blackthorn Hall with such impatient fury that the shutters shook upon their hinges. Yet, within, one candle burned beside the stair—and at the stroke of twelve, a footstep answered from the floor above, though no servant would confess to having opened the door.",
+        },
+        {
+          title: "An exercise in eloquence",
+          source: "A scholar's dilemma",
+          passage: "I would dispute the moon's pale dominion, were argument a match for such a countenance; yet she, aloof, doth govern tide and sleepless thought alike. What scholar, armed with ink and evidence, may reason daylight into the heart, however elegantly the argument be clothed in reason; and reason may yet prevail.",
+        },
+        {
+          title: "The final act",
+          source: "The crown and the candle",
+          passage: "Hark! Though fortune's fickle wheel hath cast us low, the ember of our purpose yet defies the tempest. Let neither gilded crown nor whispered prophecy unmake the vows we fashioned in the dark; for dawn shall ask what deeds, not dreams, we dared to do. Then shall the final reckoning name us by the choices we have made.",
+        },
+      ];
+
+      const testDuration = 60;
+      const input = document.getElementById("typing-input");
+      const passageText = document.getElementById("passage-text");
+      const passageWrap = document.getElementById("passage-wrap");
+      const wpmDisplay = document.getElementById("wpm");
+      const accuracyDisplay = document.getElementById("accuracy");
+      const timerDisplay = document.getElementById("timer");
+      const progressFill = document.getElementById("progress-fill");
+      const progressLabel = document.getElementById("progress-label");
+      const resultBanner = document.getElementById("result-banner");
+      const resultMessage = document.getElementById("result-message");
+      const resultScore = document.getElementById("result-score");
+      const levelButtons = [...document.querySelectorAll(".level-button")];
+
+      let selectedLevel = 0;
+      let startedAt = null;
+      let timerInterval = null;
+      let finished = false;
+
+      function currentPassage() {
+        return levels[selectedLevel].passage;
+      }
+
+      function updateWpm() {
+        if (startedAt === null) return;
+        const characters = Array.from(currentPassage());
+        const typed = Array.from(input.value);
+        const correctCharacters = typed.reduce(
+          (count, character, index) => count + (character === characters[index] ? 1 : 0),
+          0,
+        );
+        const elapsedMinutes = Math.max((Date.now() - startedAt) / 60000, 1 / 60);
+        wpmDisplay.innerHTML = `${Math.round(correctCharacters / 5 / elapsedMinutes)} <small>wpm</small>`;
+      }
+
+      function renderPassage() {
+        const characters = Array.from(currentPassage());
+        const typed = Array.from(input.value);
+
+        passageText.replaceChildren(
+          ...characters.map((character, index) => {
+            const span = document.createElement("span");
+            span.textContent = character;
+            if (index < typed.length) {
+              span.className = typed[index] === character ? "correct" : "incorrect";
+            }
+            if (index === typed.length && !finished) {
+              span.classList.add("current");
+            }
+            return span;
+          }),
+        );
+
+        const progress = Math.min(100, Math.round((typed.length / characters.length) * 100));
+        progressFill.style.width = `${progress}%`;
+        progressLabel.textContent = `${progress}%`;
+
+        const typedCount = typed.length;
+        const correctCount = typed.reduce(
+          (count, character, index) => count + (character === characters[index] ? 1 : 0),
+          0,
+        );
+        const accuracy = typedCount === 0 ? 100 : Math.round((correctCount / typedCount) * 100);
+        accuracyDisplay.innerHTML = `${accuracy}<small>%</small>`;
+
+        updateWpm();
+
+        if (typed.length >= characters.length && !finished) {
+          finishTest("passage");
+        }
+      }
+
+      function updateTimer() {
+        if (startedAt === null || finished) return;
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        const remaining = Math.max(0, testDuration - elapsed);
+        timerDisplay.innerHTML = `${remaining}<small>s</small>`;
+        timerDisplay.classList.toggle("urgent", remaining <= 10);
+        updateWpm();
+        if (remaining === 0) finishTest("time");
+      }
+
+      function startTest() {
+        if (startedAt !== null || finished) return;
+        startedAt = Date.now();
+        passageWrap.classList.add("is-active");
+        timerInterval = window.setInterval(updateTimer, 200);
+      }
+
+      function finishTest(reason) {
+        if (finished) return;
+        finished = true;
+        window.clearInterval(timerInterval);
+        input.disabled = true;
+        passageWrap.classList.remove("is-active");
+        renderPassage();
+        const finalWpm = Number.parseInt(wpmDisplay.textContent, 10) || 0;
+        resultMessage.textContent = reason === "passage" ? "Beautifully done. You finished the passage!" : "Time's up. Every keystroke counts.";
+        resultScore.textContent = `${finalWpm} wpm`;
+        resultBanner.classList.add("is-visible");
+      }
+
+      function resetTest() {
+        window.clearInterval(timerInterval);
+        input.disabled = false;
+        input.value = "";
+        startedAt = null;
+        timerInterval = null;
+        finished = false;
+        timerDisplay.classList.remove("urgent");
+        timerDisplay.innerHTML = `${testDuration}<small>s</small>`;
+        wpmDisplay.innerHTML = '0 <small>wpm</small>';
+        accuracyDisplay.innerHTML = '100<small>%</small>';
+        passageWrap.classList.remove("is-active");
+        resultBanner.classList.remove("is-visible");
+        renderPassage();
+      }
+
+      function selectLevel(levelIndex) {
+        selectedLevel = levelIndex;
+        const level = levels[levelIndex];
+        document.getElementById("level-tag").textContent = `LEVEL ${String(levelIndex + 1).padStart(2, "0")}`;
+        document.getElementById("level-title").textContent = level.title;
+        document.getElementById("source-label").textContent = level.source;
+        levelButtons.forEach((button, index) => {
+          button.setAttribute("aria-pressed", String(index === levelIndex));
+        });
+        resetTest();
+      }
+
+      input.addEventListener("input", () => {
+        if (finished) return;
+        if (input.value.length > 0) startTest();
+        renderPassage();
+      });
+
+      input.addEventListener("paste", (event) => event.preventDefault());
+      input.addEventListener("drop", (event) => event.preventDefault());
+
+      input.addEventListener("focus", () => {
+        passageWrap.classList.add("is-active");
+      });
+
+      input.addEventListener("blur", () => {
+        if (startedAt === null || finished) passageWrap.classList.remove("is-active");
+      });
+
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          resetTest();
+          input.blur();
+        }
+        if (event.key === "Tab") event.preventDefault();
+      });
+
+      document.getElementById("level-grid").addEventListener("click", (event) => {
+        const button = event.target.closest(".level-button");
+        if (!button) return;
+        selectLevel(Number(button.dataset.level) - 1);
+        input.focus();
+      });
+
+      document.getElementById("reset-button").addEventListener("click", () => {
+        resetTest();
+        input.focus();
+      });
+
+      passageWrap.addEventListener("click", () => input.focus());
+
+      renderPassage();
+    </script>
+  </body>
+</html>
